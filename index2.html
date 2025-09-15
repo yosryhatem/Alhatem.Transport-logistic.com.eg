@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الحاتم لخدمات النقل المبرد</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Tahoma', sans-serif;
+    background: #cce7ff; /* سماوي فاتح */
+    color: #000;
+    padding-bottom: 120px;
+    text-align: center;
+  }
+
+  /* Header */
+  header {
+    background: #6a0dad; /* موف */
+    padding: 40px 20px 20px 20px;
+    color: #fff; /* نص أبيض */
+    font-weight: bold;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 36px;
+  }
+  header p {
+    margin: 10px 0 0 0;
+    font-size: 20px;
+  }
+
+  /* Floating menu button (yellow) */
+  .menu-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #FFD700; /* أصفر */
+    color: #000;
+    border: none;
+    padding: 16px 18px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 1000;
+  }
+  .menu-btn:hover { background: #FFC107; }
+
+  /* Sidebar overlay */
+  .sidebar {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 220px;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    border-radius: 12px;
+    display: none;
+    flex-direction: column;
+    z-index: 999;
+    overflow: hidden;
+  }
+  .sidebar.active { display: flex; }
+  .sidebar a {
+    display: block;
+    padding: 16px 20px;
+    text-decoration: none;
+    color: #000;
+    border-bottom: 1px solid #eee;
+    font-weight: bold;
+    font-size: 16px;
+    transition: 0.3s;
+  }
+  .sidebar a:last-child { border-bottom: none; }
+  .sidebar a:hover { background: #e6d7ff; }
+
+  /* Content sections */
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 60vh;
+    padding: 30px 20px;
+    gap: 30px;
+  }
+  .section {
+    display: none;
+    width: 100%;
+    max-width: 700px;
+    background: #fff;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  .section.active {
+    display: flex;
+    opacity: 1;
+  }
+
+  /* Section headings */
+  .section h2 {
+    margin-bottom: 15px;
+    color: #6a0dad;
+    font-weight: bold;
+  }
+
+  /* نبذة عن الشركة بالخط العريض */
+  #about p {
+    font-weight: bold;
+  }
+
+  /* Forms */
+  form {
+    width: 100%;
+    text-align: right;
+  }
+  form label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 16px; }
+  form input, form textarea, form select {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+  form button {
+    background: #6a0dad;
+    color: #fff;
+    border: none;
+    padding: 16px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    width: 100%;
+  }
+  form button:hover { background: #520a9c; }
+
+  /* Footer */
+  .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #6a0dad;
+    color: #fff;
+    text-align: center;
+    padding: 18px;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
+    font-size: 15px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>الحاتم لخدمات النقل المبرد</h1>
+  <p>مع الحاتم… منتجاتك واصلة بأمان</p>
+</header>
+
+<!-- Floating menu button -->
+<button class="menu-btn" onclick="toggleMenu()">☰</button>
+
+<!-- Sidebar menu -->
+<div class="sidebar" id="sidebar">
+  <a href="#about" onclick="showSection('about')">نبذة عن الشركة</a>
+  <a href="#order" onclick="showSection('order')">اطلب سيارة</a>
+  <a href="#contact" onclick="showSection('contact')">تواصل معنا</a>
+  <a href="#nearest" onclick="showSection('nearest')">أقرب سيارة لك</a>
+  <a href="#sendLocation" onclick="sendCurrentLocation()">إرسال موقعي الحالي</a>
+</div>
+
+<div class="content">
+  <section id="about" class="section">
+    <h2>نبذة عن الشركة</h2>
+    <p>شركة الحاتم لخدمات النقل المبرد شركة رائدة بخبرة أكثر من 10 سنوات، متخصصة في النقل المبرد لضمان وصول المنتجات بنفس الجودة والكفاءة المطلوبة.</p>
+  </section>
+
+  <section id="order" class="section">
+    <h2>اطلب سيارة</h2>
+    <form onsubmit="sendWhatsApp(event)">
+      <label for="name">الاسم الكامل</label>
+      <input type="text" id="name" required>
+
+      <label for="phone">رقم الجوال</label>
+      <input type="tel" id="phone" required>
+
+      <label for="location">الموقع</label>
+      <input type="text" id="location" required>
+
+      <label for="cargo">نوع الحمولة</label>
+      <select id="cargo" required>
+        <option value="">اختر نوع الحمولة</option>
+        <option value="خضروات وفواكه">خضروات وفواكه</option>
+        <option value="لحوم وأسماك">لحوم وأسماك</option>
+        <option value="منتجات ألبان">منتجات ألبان</option>
+        <option value="أدوية ولقاحات">أدوية ولقاحات</option>
+        <option value="أخرى">أخرى</option>
+      </select>
+
+      <label for="notes">ملاحظات إضافية</label>
+      <textarea id="notes" rows="4"></textarea>
+
+      <button type="submit">إرسال الطلب</button>
+    </form>
+  </section>
+
+  <section id="contact" class="section">
+    <h2>تواصل معنا</h2>
+    <p>📞 الهاتف: 01091284389 - 01006026393 - 01010463742 - 01228016499</p>
+    <p>✉️ البريد: Alhatem@trans.com</p>
+  </section>
+
+  <section id="nearest" class="section">
+    <h2>أقرب سيارة لك</h2>
+    <p>خدماتنا تغطي جميع أنحاء جمهورية مصر العربية. قريباً سنضيف نظام تحديد أقرب سيارة إليك تلقائياً.</p>
+  </section>
+</div>
+
+<div class="footer">
+  <p>خدماتنا تغطي جميع أنحاء جمهورية مصر العربية</p>
+  <p>📞 أرقام التواصل: 01091284389 - 01006026393 - 01010463742 - 01228016499</p>
+  <p>✉️ البريد الإلكتروني: Alhatem@trans.com</p>
+</div>
+
+<script>
+function toggleMenu(){
+  document.getElementById('sidebar').classList.toggle('active');
+}
+
+function showSection(id){
+  const sections = document.querySelectorAll('.section');
+  sections.forEach(sec => sec.classList.remove('active'));
+  setTimeout(()=> { document.getElementById(id).classList.add('active'); }, 50);
+  document.getElementById('sidebar').classList.remove('active');
+}
+
+// WhatsApp
+function sendWhatsApp(e){
+  e.preventDefault();
+  const name = document.getElementById('name').value;
+  const phone = document.getElementById('phone').value;
+  const location = document.getElementById('location').value;
+  const cargo = document.getElementById('cargo').value;
+  const notes = document.getElementById('notes').value;
+  const message = `طلب سيارة من شركة الحاتم:\nالاسم: ${name}\nرقم الجوال: ${phone}\nالموقع: ${location}\nنوع الحمولة: ${cargo}\nملاحظات: ${notes}`;
+  const whatsappURL = `https://wa.me/201091284389?text=${encodeURIComponent(message)}`;
+  window.open(whatsappURL, '_blank');
+}
+
+// Send current location
+function sendCurrentLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function(position) {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        const locationURL = `https://www.google.com/maps?q=${lat},${lon}`;
+        const message = `طلب سيارة من شركة الحاتم:\nموقع العميل الحالي: ${locationURL}`;
+        const whatsappURL = `https://wa.me/201091284389?text=${encodeURIComponent(message)}`;
+        window.open(whatsappURL, '_blank');
+      },
+      function() { alert('لم نتمكن من الحصول على موقعك الحالي. الرجاء السماح بالوصول للموقع.'); }
+    );
+  } else { alert('جهازك لا يدعم تحديد الموقع.'); }
+  document.getElementById('sidebar').classList.remove('active');
+}
+</script>
+
+</body>
+</html>
